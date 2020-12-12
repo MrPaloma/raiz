@@ -1,0 +1,13 @@
+.login-page {
+    background-image: url(../img/fondo.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right bottom;
+}
+
+.btn-fat{
+    min-width: 3.5em;
+}
+
+#buscar-doc{
+}
