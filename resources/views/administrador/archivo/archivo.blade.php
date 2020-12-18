@@ -1,10 +1,8 @@
 @extends('layouts.admin_plantilla')
 
 @section('contenido')
-  
-    
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
+
+ <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
@@ -41,6 +39,7 @@
                 
                 
                 <form role="form">
+                    @csrf
                   <div class="row">
                     <div class="col-sm-12">
                       <!-- text input -->
@@ -52,7 +51,7 @@
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Mes</label>
+                            <label>Año</label>
                             <select class="form-control select2">
                               <option value="" selected>2020</option>
                               <option value="">2019</option>
@@ -69,7 +68,7 @@
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Año</label>
+                            <label>Mes</label>
                             <select class="form-control select2">
                               <option value="">Enero</option>
                               <option value="">Febrero</option>
@@ -90,13 +89,32 @@
 
                       <h5>Tipo de Documento</h5>
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                           <div class="form-group">
                             <label>Documento</label>
-                            <select class="form-control select2">
-                            @foreach($docs as $doc)
-                              <option value="">{{$doc->nombre}}</option>
-                            @endforeach
+                            <select class="form-control select2" id="documentos">
+                                @foreach($documentos as $documento)
+                                    <option value="{{ $documento->id }}">{{ $documento->nombre }}</option>
+                                @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label>SubDocumento</label>
+                            <select class="form-control select2" id="subdocumentos">
+                              <option value="">Enero</option>
+                              <option value="">Febrero</option>
+                              <option value="">Marzo</option>
+                              <option value="">Abril</option>
+                              <option value="">Mayo</option>
+                              <option value="">Junio</option>
+                              <option value="">Julio</option>
+                              <option value="">Agosto</option>
+                              <option value="">Septiembre</option>
+                              <option value="">Octubre</option>
+                              <option value="">Noviembre</option>
+                              <option value=""  selected>Diciembre</option>
                             </select>
                           </div>
                         </div>
@@ -174,5 +192,35 @@
       <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  
+
+@endsection
+
+@section('script')
+    <script>
+
+        $(document).ready(function(){
+            $('#documentos').on('change', function(){
+                var documento_id = $(this).val();
+                var _token = $('input[name="_token"]').val(); 
+
+                $.ajax({
+                    url: '/subdocumentos',
+                    method: 'POST',
+                    data: {
+                        documento_id: documento_id,
+                        _token: _token
+                    }
+                }).done(function(subdocumentos){
+                    $('#subdocumentos').empty();
+                    $('#subdocumentos').append("<option value=''>Seleccione un subdocumento</option>");
+
+                    $.each(subdocumentos, function (index, value) {
+                        $('#subdocumentos').append("<option value='" + index + "'>" + value +"</option>");
+                    });
+                })
+            });
+        })
+
+
+    </script>
 @endsection

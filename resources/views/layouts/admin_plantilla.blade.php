@@ -148,13 +148,13 @@
                             </a>
                             <ul class="nav nav-treeview" style="display: none;">
                                 <li class="nav-item">
-                                    <a href="./administradores.html" class="nav-link">
+                                    <a href="{{route('admin.index') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Administradores</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./clientes.html" class="nav-link">
+                                    <a href="{{route('cliente.index') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Clientes</p>
                                     </a>
@@ -244,7 +244,8 @@
         <!-- AdminLTE for demo purposes -->
         <script src="{{asset('js/demo.js')}}"></script>
 
-
+        <script src="{{asset('js/jquery-3.5.1.min.js')}}"></script>
+        @yield('script')
         
         </body>
     </html>

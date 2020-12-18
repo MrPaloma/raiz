@@ -42,7 +42,7 @@
                             </div>
                             <div class="form-group">
                             <label>Razón social:</label>
-                              <textarea class="form-control" rows="3" placeholder="Describa a que rubro se dedica..." name="razon_social"></textarea>  
+                              <textarea class="form-control" rows="3" placeholder="Describa a que rubro se dedica..." name="razon"></textarea>  
                             </div>
                             <div class="form-group">
                               <label for="direccion">Dirección:</label>

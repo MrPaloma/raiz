@@ -7,7 +7,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>clienteistradores</h1>
+            <h1>Clientes</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -62,28 +62,32 @@
 
                     @foreach($clientes as $cliente)
                         <tr role="row" class="odd">
-                            <td tabindex="0" class="sorting_1">{{$cliente->id}}</td>
-                            <td>{{$cliente->DNI}}</td>
-                            <td>{{$cliente->nombre}}</td>
+                            <td tabindex="0" class="sorting_1">{{ $cliente->id }}</td>
+                            <td>{{ $cliente->RUC }}</td>
+                            <td>{{ $cliente->nombre }}</td>
                             <td>
-                          <a href="perfilCliente.html" class="btn btn-fat btn-info">
+                          <a href="{{route('cliente.show', $cliente->id)}}"  class="btn btn-fat btn-info">
                             <i class="fas fa-info"></i> 
                           </a>
                         </td>
                         <td>
-                          <a href="subirDocumentos.html" class="btn btn-fat btn-primary">
+                          <a href="{{ route('cliente.edit', $cliente->id) }}" class="btn btn-fat btn-primary">
                             <i class="fa fa-folder"></i> 
                           </a>
                         </td>
                         <td>
-                          <a class="btn btn-fat btn-secondary">
+                          <a href="{{ route('cliente.edit', $cliente->id) }}" class="btn btn-fat btn-secondary">
                             <i class="fas fa-edit"></i> 
                           </a>
                         </td>
                         <td>
-                          <a class="btn btn-fat btn-danger" id="btn">
-                            <i class="fas fa-trash"></i>
-                          </a>
+                        <form method="post" action="{{ route('cliente.destroy' , $cliente->id )}}"  enctype="multipart/form-data">
+                              @csrf
+                              @method('DELETE')
+                                <button type="submit" class="btn btn-fat btn-danger" id="btn"><i class="fas fa-trash"></i></button>
+                                    
+                                </a>
+                              </form>
                         </td>
                     </tr>
                     @endforeach

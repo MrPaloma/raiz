@@ -81,7 +81,7 @@
                   <!-- /.card-body -->
   
                   <div class="card-footer">
-                    <a href="administradores.html"" class="btn btn-lg btn-danger">Cancelar</a>
+                    <a href="{{route('admin.index') }}" class="btn btn-lg btn-danger">Cancelar</a>
                     <button type="submit" class="btn btn-lg btn-success float-right">Guardar</button>
                   </div>
                 </form>

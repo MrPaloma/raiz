@@ -23,4 +23,6 @@ Route::resource('/admin', AdminUserController::class);
 
 Route::resource('/cliente', ClienteUserController::class);
 
-Route::get('/cliente/{id}/doc', 'App\Http\Controllers\Administrador\ArchivoController@index');
+Route::get('/cliente/{id}/doc', 'App\Http\Controllers\Administrador\ArchivoController@documentos');
+
+Route::get('/subdocumentos', 'App\Http\Controllers\Administrador\ArchivoController@subdocumentos');

@@ -61,7 +61,7 @@ class ClienteUserController extends Controller
 
         $cliente->user_id = $user_id->id;
         $cliente->RUC = $request->RUC;
-        $cliente->razon_social = $request->razon_social;
+        $cliente->razon = $request->razon;
         $cliente->nombre = $request->nombre;
         $cliente->foto = $request->foto;
         $cliente->direccion = $request->direccion;
@@ -92,7 +92,10 @@ class ClienteUserController extends Controller
      */
     public function show($id)
     {
-        return view('administrador.cliente.ver');
+        $user = Cliente::findOrFail($id)->user;
+        $cliente = Cliente::findOrFail($id);
+
+        return view('administrador.cliente.ver', compact('cliente', 'user'));
     }
 
     /**
@@ -121,13 +124,12 @@ class ClienteUserController extends Controller
     {
 
         User::where('id', $id)
-                ->update(['email' => $request->email,
-                            'rol' => $request->rol]);
+                ->update(['email' => $request->email]);
 
         Cliente::where('user_id', $id)
-                ->update(['DNI' => $request->DNI,
+                ->update(['RUC' => $request->RUC,
                             'nombre' => $request->nombre,
-                            'apellido' => $request->apellido,
+                            'razon' => $request->razon,
                             'direccion' => $request->direccion,
                             'celular' => $request->celular]);
 
@@ -135,7 +137,7 @@ class ClienteUserController extends Controller
         {
             $nombre = $archivo->getClientOriginalName();
 
-            $ruta = "images/$request->DNI/";
+            $ruta = "images/$request->RUC/";
 
             $archivo->move($ruta, $nombre);
 

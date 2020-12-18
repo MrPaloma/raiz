@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDocsTable extends Migration
+class CreateSubdocumentosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateDocsTable extends Migration
      */
     public function up()
     {
-        Schema::create('docs', function (Blueprint $table) {
+        Schema::create('subdocumentos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('documento_id');
             $table->string('nombre');
             $table->timestamps();
+
+            
+            // $table->foreign('documento_id')->references('id')->on('documentos');
         });
     }
 
@@ -27,6 +31,6 @@ class CreateDocsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('docs');
+        Schema::dropIfExists('subdocumentos');
     }
 }

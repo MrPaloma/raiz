@@ -18,11 +18,13 @@ class CreateClientesTable extends Migration
             $table->integer('user_id')->index();
             $table->string('RUC', 11)->unique();
             $table->string('nombre', 100);
-            $table->text('razon_social');
+            $table->text('razon');
             $table->string('foto', 200)->nullable();
             $table->string('direccion', 100)->nullable();
             $table->string('celular', 15)->nullable();
             $table->timestamps();
+
+            // $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

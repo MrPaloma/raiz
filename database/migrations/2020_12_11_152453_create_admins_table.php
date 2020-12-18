@@ -23,6 +23,8 @@ class CreateAdminsTable extends Migration
             $table->string('direccion', 100)->nullable();
             $table->string('celular', 15)->nullable();
             $table->timestamps();
+
+            // $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

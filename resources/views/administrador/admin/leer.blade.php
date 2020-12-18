@@ -78,8 +78,8 @@
                             <form method="post" action="{{ route('admin.destroy' , $admin->id )}}"  enctype="multipart/form-data">
                               @csrf
                               @method('DELETE')
-                                <input type="submit" class="btn btn-fat btn-danger" id="btn">
-                                    <i class="fas fa-trash"></i>
+                                <button type="submit" class="btn btn-fat btn-danger" id="btn"><i class="fas fa-trash"></i></button>
+                                    
                                 </a>
                               </form>
                             </td>
