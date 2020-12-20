@@ -9,6 +9,9 @@ class Subdocumento extends Model
 {
     use HasFactory;
 
-    
+    public function documento()
+    {
+        return $this->belongsTo(Documento::class);
+    }
 }
 

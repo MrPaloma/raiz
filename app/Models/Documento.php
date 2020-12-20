@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Documento extends Model
 {
     use HasFactory;
+
+    public function subdocumentos()
+    {
+        return $this->hasMany(Subdocumento::class);
+    }
+
 }

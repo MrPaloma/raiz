@@ -71,7 +71,7 @@
                           </a>
                         </td>
                         <td>
-                          <a href="{{ route('cliente.edit', $cliente->id) }}" class="btn btn-fat btn-primary">
+                          <a href="cliente/{{ $cliente->id }}/doc" class="btn btn-fat btn-primary">
                             <i class="fa fa-folder"></i> 
                           </a>
                         </td>

@@ -1,5 +1,11 @@
 @extends('layouts.admin_plantilla')
 
+@section('metadatos')
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+@endsection
+
 @section('contenido')
 
  <section class="content-header">
@@ -39,49 +45,51 @@
                 
                 
                 <form role="form">
-                    @csrf
                   <div class="row">
                     <div class="col-sm-12">
                       <!-- text input -->
                       <div class="form-group">
                         <label for="dni">RUC:</label>
-                        <input type="text" class="form-control" id="dni" placeholder="12345678910" disabled="">
+                        @foreach($cliente as $client)
+                          <input id="ruc" type="text" class="form-control" value="{{ $client->RUC }}" disabled="">
+                          <input id="cliente_id" type="text" class="form-control" value="{{ $client->id }}" disabled="">
+                        @endforeach
                       </div>
                       <h5>Fecha de subida</h5>
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Año</label>
-                            <select class="form-control select2">
-                              <option value="" selected>2020</option>
-                              <option value="">2019</option>
-                              <option value="">2018</option>
-                              <option value="">2017</option>
-                              <option value="">2016</option>
-                              <option value="">2015</option>
-                              <option value="">2014</option>
-                              <option value="">2013</option>
-                              <option value="">2012</option>
-                              <option value="">2011</option>
+                            <select class="form-control select2" id="year">
+                              <option value="2020" selected>2020</option>
+                              <option value="2019">2019</option>
+                              <option value="2018">2018</option>
+                              <option value="2017">2017</option>
+                              <option value="2016">2016</option>
+                              <option value="2015">2015</option>
+                              <option value="2014">2014</option>
+                              <option value="2013">2013</option>
+                              <option value="2012">2012</option>
+                              <option value="2011">2011</option>
                             </select>
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Mes</label>
-                            <select class="form-control select2">
-                              <option value="">Enero</option>
-                              <option value="">Febrero</option>
-                              <option value="">Marzo</option>
-                              <option value="">Abril</option>
-                              <option value="">Mayo</option>
-                              <option value="">Junio</option>
-                              <option value="">Julio</option>
-                              <option value="">Agosto</option>
-                              <option value="">Septiembre</option>
-                              <option value="">Octubre</option>
-                              <option value="">Noviembre</option>
-                              <option value=""  selected>Diciembre</option>
+                            <select class="form-control select2" id="month">
+                              <option value="Enero">Enero</option>
+                              <option value="Febrero">Febrero</option>
+                              <option value="Marzo">Marzo</option>
+                              <option value="Abril">Abril</option>
+                              <option value="Mayo">Mayo</option>
+                              <option value="Junio">Junio</option>
+                              <option value="Julio">Julio</option>
+                              <option value="Agosto">Agosto</option>
+                              <option value="Septiembre">Septiembre</option>
+                              <option value="Octubre">Octubre</option>
+                              <option value="Noviembre">Noviembre</option>
+                              <option value="Diciembre"  selected>Diciembre</option>
                             </select>
                           </div>
                         </div>
@@ -92,7 +100,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Documento</label>
-                            <select class="form-control select2" id="documentos">
+                            <select class="form-control select2" id="doc">
                                 @foreach($documentos as $documento)
                                     <option value="{{ $documento->id }}">{{ $documento->nombre }}</option>
                                 @endforeach
@@ -102,19 +110,10 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>SubDocumento</label>
-                            <select class="form-control select2" id="subdocumentos">
-                              <option value="">Enero</option>
-                              <option value="">Febrero</option>
-                              <option value="">Marzo</option>
-                              <option value="">Abril</option>
-                              <option value="">Mayo</option>
-                              <option value="">Junio</option>
-                              <option value="">Julio</option>
-                              <option value="">Agosto</option>
-                              <option value="">Septiembre</option>
-                              <option value="">Octubre</option>
-                              <option value="">Noviembre</option>
-                              <option value=""  selected>Diciembre</option>
+                            <select class="form-control select2" id="subdoc">
+                              @foreach($subdocumentos as $subdocumento)
+                                  <option value="{{ $subdocumento->id }}">{{ $subdocumento->nombre }}</option>
+                              @endforeach
                             </select>
                           </div>
                         </div>
@@ -167,6 +166,13 @@
                           </a>
                         </td>
                     </tr>
+                    <tr role="row" class="odd">
+                        <form method="post" action="{{route('archivo.store')}}"  enctype="multipart/form-data" id="formArchivo">
+                          <td tabindex="0" class="sorting_1">#</td>
+                          <td><input type="file" name="archivo"></td>
+                          <td><button type="submit" id="subirDoc">Guardar</button></td>
+                        </form>
+                    </tr>
                   </tbody>
                     
                     <tfoot>
@@ -199,26 +205,63 @@
     <script>
 
         $(document).ready(function(){
-            $('#documentos').on('change', function(){
+
+            $.ajaxSetup({
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              }
+            });
+
+            $('#documento').change(function(){
                 var documento_id = $(this).val();
-                var _token = $('input[name="_token"]').val(); 
 
                 $.ajax({
                     url: '/subdocumentos',
                     method: 'POST',
                     data: {
-                        documento_id: documento_id,
-                        _token: _token
+                        documento_id: documento_id
                     }
                 }).done(function(subdocumentos){
-                    $('#subdocumentos').empty();
-                    $('#subdocumentos').append("<option value=''>Seleccione un subdocumento</option>");
+                    $('#subdocumento').empty();
 
                     $.each(subdocumentos, function (index, value) {
-                        $('#subdocumentos').append("<option value='" + index + "'>" + value +"</option>");
+                        $('#subdocumento').append("<option value='" + index + "'>" + value +"</option>");
                     });
                 })
             });
+
+            $("#formArchivo").on("submit", function(e){
+              e.preventDefault();
+              var f = $(this);
+              var year = $('#year').val();
+              var month = $('#month').val();
+              var doc = $('#doc').val();
+              var subdoc = $('#subdoc').val();
+              var ruc = $('#ruc').val();
+              var cliente_id = $('#cliente_id').val();
+
+
+              var formData = new FormData(document.getElementById("formArchivo"));
+              formData.append("ruc", ruc);
+              formData.append("cliente_id", cliente_id);
+              formData.append("year", year);
+              formData.append("month", month);
+              formData.append("doc", doc);
+              formData.append("subdoc", subdoc);
+
+              $.ajax({
+                  url: "{{route('archivo.store')}}",
+                  type: "post",
+                  dataType: "html",
+                  data: formData,
+                  cache: false,
+                  contentType: false,
+                  processData: false
+              })
+                  .done(function(res){
+                      console.log(res);
+                  });
+          });
         })
 
 
