@@ -44,7 +44,7 @@
                 <div class="card-body" style="display: block;">
                 
                 
-                <form role="form">
+                <form method="post" action="{{route('archivo.show')}}" id="formShow">
                   <div class="row">
                     <div class="col-sm-12">
                       <!-- text input -->
@@ -52,7 +52,7 @@
                         <label for="dni">RUC:</label>
                         @foreach($cliente as $client)
                           <input id="ruc" type="text" class="form-control" value="{{ $client->RUC }}" disabled="">
-                          <input id="cliente_id" type="text" class="form-control" value="{{ $client->id }}" disabled="">
+                          <input id="cliente_id" type="hidden" class="form-control" value="{{ $client->id }}" disabled="">
                         @endforeach
                       </div>
                       <h5>Fecha de subida</h5>
@@ -120,14 +120,15 @@
                       </div>
                     </div>
                   </div>
-                </form>
+                
                 </div>
              
               <!-- /.card-body -->
                 <div class="card-footer" style="display: block;">
-                    <button type="button" class="btn btn-block btn-lg btn-info" id="buscar-doc">
+                    <button type="submit" class="btn btn-block btn-lg btn-info" id="buscar-doc">
                       <i class="fa fa-search"></i></button>
                 </div>
+                </form>
             </div>  
             <div class="card">
               
@@ -141,45 +142,51 @@
                     <tr role="row">
                       <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending" style="width: 10px">IdDoc</th>
                       <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Documento</th>
-                      <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Doc - Tipo</th>
-                      <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Fecha</th>
                       <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Descargar</th>
                       <th tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Eliminar</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody  id="archivos">
+
+                      <script>
+                            function borrar(id){
+                              let fila = "registro_" + id;
+                              ocultar(fila);
+                              console.log(fila)
+
+                              $.ajax({
+                                  url: "{{route('archivo.destroy')}}",
+                                  method: 'POST',
+                                  data: {
+                                      id: id
+                                  }
+                              }).done(function(res){
+                                console.log("eliminado");
+                                console.log(res)
+                              })
+                            }
+
+                            function ocultar(fila){
+                              let elemento = document.getElementById(fila);
+                              elemento.style.display = "none";
+                            }
+
+                      </script>
                       
-                    </tbody><tbody>
-                      <tr role="row" class="odd">
-                        <td tabindex="0" class="sorting_1">1</td>
-                        <td><a href="#">aaaaa.pdf</a></td>
-                        <td>Comprobante - Pago</td>
-                        <td>Marzo - 2019</td>
-                        <td>
-                          <a href="perfilCliente.html" class="btn btn-fat btn-primary">
-                            <i class="fas fa-download"></i> 
-                          </a>
-                        </td>
-                        <td>
-                          <a href="subirDocumentos.html" class="btn btn-fat btn-danger">
-                            <i class="fas fa-trash"></i> 
-                          </a>
-                        </td>
-                    </tr>
+                    </tbody>
+                    <tr>
                     <tr role="row" class="odd">
                         <form method="post" action="{{route('archivo.store')}}"  enctype="multipart/form-data" id="formArchivo">
                           <td tabindex="0" class="sorting_1">#</td>
-                          <td><input type="file" name="archivo"></td>
+                          <td colspan="2"><input type="file" name="archivo"></td>
                           <td><button type="submit" id="subirDoc">Guardar</button></td>
                         </form>
+                      </tr>
                     </tr>
-                  </tbody>
-                    
                     <tfoot>
-                    <tr><th rowspan="1" colspan="1">IdDoc</th>
+                    <tr>
+                      <th rowspan="1" colspan="1">IdDoc</th>
                       <th rowspan="1" colspan="1">Documento</th>
-                      <th rowspan="1" colspan="1">Doc - Tipo</th>
-                      <th rowspan="1" colspan="1">Fecha</th>
                       <th rowspan="1" colspan="1">Descargar</th>
                       <th rowspan="1" colspan="1">Eliminar</th>
                     </tr>
@@ -212,24 +219,55 @@
               }
             });
 
-            $('#documento').change(function(){
+            $('#doc').change(function(){
                 var documento_id = $(this).val();
 
                 $.ajax({
-                    url: '/subdocumentos',
+                    url: "{{route('archivo.subdocumentos')}}",
                     method: 'POST',
                     data: {
                         documento_id: documento_id
                     }
                 }).done(function(subdocumentos){
-                    $('#subdocumento').empty();
+                    $('#subdoc').empty();
 
                     $.each(subdocumentos, function (index, value) {
-                        $('#subdocumento').append("<option value='" + index + "'>" + value +"</option>");
+                        $('#subdoc').append("<option value='" + index + "'>" + value +"</option>");
                     });
                 })
             });
 
+            $("#formShow").submit(function(e){  
+              e.preventDefault();
+              var year = $('#year').val();
+              var month = $('#month').val();
+              var doc = $('#doc').val();
+              var subdoc = $('#subdoc').val();
+              var ruc = $('#ruc').val();
+              var cliente_id = $('#cliente_id').val();
+
+              $.ajax({
+                  url: "{{route('archivo.show')}}",
+                  method: "POST",
+                  data: { year:year, month:month, doc:doc, subdocumento_id:subdoc, ruc:ruc, cliente_id:cliente_id},
+                  cache: false
+              })
+              .done(function(array){
+
+                  $.each(array, function (index, value) {
+                   
+
+                    $('#archivos').append("<tr role='row' class='odd' id='registro_"+index+"'><td>" + index + "</td><td>" + value['nombre'] + "</td><td><a href='" + value['path'] + "' class='btn btn-fat btn-primary'><i class='fas fa-download'></i></a></td><td><button onclick='borrar(" + index + ")' vhref='#' class='btn btn-fat btn-danger'><i class='fas fa-trash'></i></button></td></tr>");
+                  });
+
+                 
+                  
+              });
+          });
+
+                
+                
+  
             $("#formArchivo").on("submit", function(e){
               e.preventDefault();
               var f = $(this);
@@ -247,7 +285,7 @@
               formData.append("year", year);
               formData.append("month", month);
               formData.append("doc", doc);
-              formData.append("subdoc", subdoc);
+              formData.append("subdocumento_id", subdoc);
 
               $.ajax({
                   url: "{{route('archivo.store')}}",
@@ -258,10 +296,33 @@
                   contentType: false,
                   processData: false
               })
-                  .done(function(res){
-                      console.log(res);
-                  });
+              .done(function(array){
+                alldata();
+              });
           });
+          
+          function alldata() {
+            var year = $('#year').val();
+              var month = $('#month').val();
+              var doc = $('#doc').val();
+              var subdoc = $('#subdoc').val();
+              var ruc = $('#ruc').val();
+              var cliente_id = $('#cliente_id').val();
+
+              $.ajax({
+                  url: "{{route('archivo.show')}}",
+                  method: "POST",
+                  data: { year:year, month:month, doc:doc, subdocumento_id:subdoc, ruc:ruc, cliente_id:cliente_id},
+                  cache: false
+              })
+              .done(function(array){
+                
+                $('#archivos').empty();
+                  $.each(array, function (index, value) {
+                    $('#archivos').append("<tr role='row' class='odd' id='registro_"+index+"'><td>" + index + "</td><td>" + value['nombre'] + "</td><td><a href='" + value['path'] + "' class='btn btn-fat btn-primary'><i class='fas fa-download'></i></a></td><td><button onclick='borrar(" + index + ")' vhref='#' class='btn btn-fat btn-danger'><i class='fas fa-trash'></i></button></td></tr>");
+                  });
+              });
+          }
         })
 
 

@@ -9,9 +9,14 @@ class Documento extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['nombre'];
+
+    protected $guarded = [];
+
     public function subdocumentos()
     {
         return $this->hasMany(Subdocumento::class);
+        
     }
 
 }

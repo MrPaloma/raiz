@@ -24,7 +24,7 @@ Route::resource('/admin', AdminUserController::class);
 Route::resource('/cliente', ClienteUserController::class);
 
 Route::get('/cliente/{id}/doc', 'App\Http\Controllers\Administrador\ArchivoController@documentos');
-
-Route::post('/subdocumentos', 'App\Http\Controllers\Administrador\ArchivoController@subdocumentos');
-
+Route::post('/subdocumentos', 'App\Http\Controllers\Administrador\ArchivoController@subdocumentos')->name('archivo.subdocumentos');
 Route::post('/archivo/store', 'App\Http\Controllers\Administrador\ArchivoController@store')->name('archivo.store');
+Route::post('/archivo/show', 'App\Http\Controllers\Administrador\ArchivoController@show')->name('archivo.show');
+Route::post('/archivo/destroy', 'App\Http\Controllers\Administrador\ArchivoController@destroy')->name('archivo.destroy');

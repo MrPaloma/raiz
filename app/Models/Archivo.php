@@ -14,6 +14,8 @@ class Archivo extends Model
         'subdocumento_id',
         'nombre',
         'path',
+        'month',
+        'year'
     ];
 
     

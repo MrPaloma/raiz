@@ -27,6 +27,7 @@ class ArchivoController extends Controller
         if ($request -> ajax())
         {
             $subdocumentos = Subdocumento::where('documento_id', $request->documento_id)->get();
+
             foreach ($subdocumentos as $subdocumento)
             {
                 $subdocumentoArray[$subdocumento->id] = $subdocumento->nombre;
@@ -36,16 +37,33 @@ class ArchivoController extends Controller
         }
     }
 
+    public function show(Request $request)
+    {
+        $archivos = Archivo::where('cliente_id', $request->cliente_id)
+                            ->where('subdocumento_id', $request->subdocumento_id)
+                            ->where('month', $request->month)
+                            ->where('year', $request->year)->get();
+
+
+        foreach ($archivos as $archivo)
+        {
+            $array[$archivo->id] = ['nombre' => $archivo->nombre, 'path' => $archivo->path];
+        }
+        
+        return response()->json($array);
+    }
+
     public function store(Request $request)
     {
         
-        $subdocumento = Subdocumento::where('id', $request->subdoc)->get()->first();
+        $subdocumento = Subdocumento::where('id', $request->subdocumento_id)->get()->first();
         $documento = Documento::where('id', $request->doc)->get()->first();
 
         $archivo = new Archivo;
         $archivo->cliente_id = $request->cliente_id;
-        $archivo->subdocumento_id = $request->subdoc;
-        // $archivo->fecha = $request->month . " - " . $request->year;
+        $archivo->subdocumento_id = $request->subdocumento_id;
+        $archivo->year = $request->year;
+        $archivo->month = $request->month;
 
         $doc = $request->file('archivo');
 
@@ -58,8 +76,20 @@ class ArchivoController extends Controller
         $archivo->nombre = $nombre;
 
         $archivo->save();
-        
-        return "oki";
 
+        return "oka";
+    }
+
+    public function destroy(Request $request)
+    {
+        $archivo = Archivo::find($request->id);
+
+        // unlink($archivo->path);
+
+        $archivo::destroy($request->id);
+
+        return "eliminado";
+
+        
     }
 }

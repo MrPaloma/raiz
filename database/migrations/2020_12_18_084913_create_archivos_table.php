@@ -18,6 +18,8 @@ class CreateArchivosTable extends Migration
             $table->unsignedBigInteger('subdocumento_id')->index();
             $table->unsignedBigInteger('cliente_id')->index();
             $table->string('nombre');
+            $table->string('month');
+            $table->string('year');
             $table->string('path');
             $table->timestamps();
 
